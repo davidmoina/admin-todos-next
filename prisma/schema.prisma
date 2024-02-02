@@ -11,11 +11,14 @@ datasource db {
 }
 
 model Todo {
-  id String @id @default(uuid())
-  description String
-  complete Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(uuid())
+  description   String
+  complete      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String
 }
 
 // Authjs
@@ -34,7 +37,7 @@ model Account {
   id_token           String?  @db.Text
   session_state      String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -50,15 +53,16 @@ model Session {
 model User {
   id            String    @id @default(uuid())
   name          String?
-  //aded for me ---
+  password      String?
   roles         String[]  @default(["user"])
   isActive      Boolean   @default(true)
-  // ----------------
   email         String?   @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
+
+  todos         Todo[]
 
 }
 
